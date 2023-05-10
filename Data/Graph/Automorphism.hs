@@ -31,7 +31,7 @@ module Data.Graph.Automorphism(canonicGraph, canonicGraph0, autGenerators,
 import Data.Graph(Graph, Vertex)
 import Data.Array
 import Data.List (sort, isPrefixOf)
-import Control.Monad.State
+import Control.Monad (when)
 import Control.Monad.ST
 import Data.Graph.Partition
 import Data.Graph.Permutation
@@ -246,5 +246,8 @@ isIsomorphic g1 g2 = bounds g1 == bounds g2 && canonicGraph p g1 == canonicGraph
 autGenerators :: Partition -> Graph -> [Permutation]
 autGenerators userPartition gr = fst $ automorphisms userPartition gr
 
-
+withUnitPartition
+  :: (Partition -> Array Vertex e -> t)
+  -> Array Vertex e
+  -> t
 withUnitPartition f gr = f (unitPartition $ bounds gr) gr

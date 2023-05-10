@@ -15,7 +15,7 @@
     Vol. 30 (1981), pp. 45-87.
 
 -}
-
+{-# OPTIONS_GHC -Wwarn=incomplete-uni-patterns #-}
 module Data.Graph.Partition(Cell, Partition, refine, isSingleton,
                             unitPartition, isDiscrete, mcr,
                             Indicator, lambda, lambda_, fixedInOrbits) where
