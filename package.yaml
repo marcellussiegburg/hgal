@@ -29,7 +29,7 @@ dependencies:
  - mtl                         >= 2 && < 2.4
 
 library:
-  source-dirs: .
+  source-dirs: src
   exposed-modules:
    - Data.Graph.Partition
    - Data.Graph.Construction
@@ -40,7 +40,7 @@ tests:
   hgal-test:
     main: Main.hs
     source-dirs:
-    - tests
+    - test
     ghc-options:
     - -threaded
     - -rtsopts

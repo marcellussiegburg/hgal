@@ -33,7 +33,7 @@ library
   other-modules:
       Paths_hgal
   hs-source-dirs:
-      ./
+      src
   ghc-options: -O2 -Wall -Wincomplete-uni-patterns -Wincomplete-record-updates -Widentities -Wredundant-constraints
   build-depends:
       array >=0.3 && <0.6
@@ -51,7 +51,7 @@ test-suite hgal-test
       Sudoku
       Paths_hgal
   hs-source-dirs:
-      tests
+      test
   ghc-options: -O2 -Wall -Wincomplete-uni-patterns -Wincomplete-record-updates -Widentities -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       QuickCheck
