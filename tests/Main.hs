@@ -13,7 +13,6 @@ import Data.Array
 import Data.List
 import Shuffle
 import Test.QuickCheck
-import Test.QuickCheck.Batch hiding (runTests)
 import Sudoku
 
 import Data.List(nub)
@@ -44,40 +43,21 @@ main = runBenchmark $ test_canonic "default" canonicGraph'
 prop_canonicLabelling canonic gr 
     = forAll (arbitraryPerm (bounds gr)) (\p -> canonic (applyPerm p gr) == canonic gr)
 
-options = TestOptions
-          {
-           no_of_tests = 200,
-           length_of_tests = 20,
-           debug_tests = False
-          }
-
-resultOk (TestOk _ _ _) = True
-resultOk (TestExausted _ _ _) = True
-resultOk (TestFailed _ _) = False
-resultOk (TestAborted _) = False
-
-runOneTest (test, name) = withLab name $ 
+runOneTest (test, name) = withLab name $
                           timeIO $ 
     do putStr $ name ++ "..."
-       result <- run test options
-       putStrLn $ prettyResult result
-       return result
-       
+       quickCheckWithResult stdArgs {
+         maxDiscardRatio = 20,
+         maxSuccess = 200
+         } test
+
 runTests groupName propTests =
     do blift $ putStrLn $ "Running tests " ++ groupName
        results <- mapM runOneTest $ propTests
-       let ok = all resultOk results
-       let failing = filter (not . resultOk . snd) $ zip (map snd propTests) results
+       let ok = all isSuccess results
+       let failing = filter (not . isSuccess . snd) $ zip (map snd propTests) results
        blift $ putStrLn $ "RESULT: " ++ groupName ++ " " ++ if ok then "PASSED" else "FAILED"
        return (groupName, failing)
-
-prettyResult (TestOk s n msg) = s ++ " " ++ show n ++ concatMap concat msg
-prettyResult (TestExausted s n msg) = s ++ show n ++ concatMap concat msg
-prettyResult (TestFailed s n) = "failed with at " ++ show n ++ " with (" ++ concat (intersperse "," s) ++ ")"
-prettyResult (TestAborted e) = "aborted: " ++ show e
-
-instance Show TestResult where show = prettyResult
-
 
 test_canonic name canonic
     = withLab name $ runTests name [(prop_canonicLabelling canonic gr,n) | (gr,n) <- graphs]

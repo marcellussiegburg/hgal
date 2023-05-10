@@ -1,3 +1,4 @@
+{-# LANGUAGE DeriveAnyClass #-}
 module Bench where
 
 import System.CPUTime
@@ -62,6 +63,7 @@ many :: Int -> Benchmark a -> Benchmark ()
 many n bench = sequence_ (replicate n bench)
 
 data Trie k v = Trie (Maybe v) (M.Map k (Trie k v))
+  deriving Semigroup
 
 toTrie :: Ord k => ([k],v) -> Trie k v
 toTrie ([],v) = Trie (Just v) (M.empty)
