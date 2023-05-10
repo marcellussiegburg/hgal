@@ -1,0 +1,52 @@
+name:                hgal
+version:             2.0.0.2
+github:              "marcellussiegburg/hgal"
+license:             GPL
+license-file:        LICENSE
+author:              "Jean-Philippe Bernardy"
+maintainer:          "marcellus.siegburg@uni-due.de"
+
+extra-source-files:
+ - README.md
+ - LICENSE
+ghc-options:
+ - -O2
+ - -Wall
+ - -Wincomplete-uni-patterns
+ - -Wincomplete-record-updates
+ - -Widentities
+ - -Wredundant-constraints
+
+synopsis:            library for computation automorphism group and canonical labelling of a graph
+category:            data structures, algorithms
+
+description:         Please see the README on GitHub at <https://github.com/marcellussiegburg/hgal#readme>
+
+dependencies:
+ - array                       >= 0.3 && < 0.6
+ - base                        >= 4 && < 5
+ - containers                  >= 0.4 && < 0.7
+ - mtl                         >= 2 && < 2.4
+
+library:
+  source-dirs: .
+  exposed-modules:
+   - Data.Graph.Partition
+   - Data.Graph.Construction
+   - Data.Graph.Permutation
+   - Data.Graph.Automorphism
+
+tests:
+  hgal-test:
+    main: Main.hs
+    source-dirs:
+    - tests
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - QuickCheck
+    - hgal
+    - old-time
+    - random
