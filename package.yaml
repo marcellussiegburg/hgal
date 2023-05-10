@@ -24,7 +24,7 @@ description:         Please see the README on GitHub at <https://github.com/marc
 
 dependencies:
  - array                       >= 0.3 && < 0.6
- - base                        >= 4 && < 5
+ - base                        >= 4.11 && < 5
  - containers                  >= 0.4 && < 0.7
  - mtl                         >= 2 && < 2.4
 
@@ -48,5 +48,6 @@ tests:
     dependencies:
     - QuickCheck
     - hgal
+    - extra
     - old-time
     - random
