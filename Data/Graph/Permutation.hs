@@ -48,9 +48,9 @@ orbitsFromPerm = map flatten . dff . permAsGraph
 
 -- | Returns a permutation whose orbits are given.
 permFromOrbits :: Bounds -> Partition -> Permutation
-permFromOrbits bnds orbits = array bnds $ concat $ map cycleOf $ orbits
+permFromOrbits bnds orbits = array bnds $ concatMap cycleOf orbits
     where cycleOf' first (v1:v2:vs) = (v1, v2) : cycleOf' first (v2:vs)
-          cycleOf' first (v:[]) = [(v, first)]
+          cycleOf' first [v] = [(v, first)]
           cycleOf' _ _ = []
           cycleOf orbit@(v:_) = cycleOf' v orbit
           cycleOf _ = []

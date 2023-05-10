@@ -75,7 +75,7 @@ splitCell (v:c) = (v, c) : [(v2, v:c2) | (v2, c2) <- splitCell c]
 
 childPartitions :: Graph -> Partition -> [(Vertex, Partition)]
 childPartitions gr part =
-    [(n, refine gr p [[n]]) | (n,p) <- (splitPartition part)]
+    [(n, refine gr p [[n]]) | (n,p) <- splitPartition part]
 
 partitionTree :: Partition -> Graph -> Tree Partition
 partitionTree userPartition gr = tree (initialPartition userPartition gr)
@@ -101,7 +101,7 @@ paths (Node x cs) = map (x:) (concatMap paths cs)
 -- This implementation serves documentation and debugging purposes.
 canonicGraph0 :: Partition -> Graph -> Graph
 canonicGraph0 userPartition gr0 = snd . minimum . map fct . paths . partitionTree userPartition $ gr
-    where gr = fmap sort $ gr0
+    where gr = sort <$> gr0
           fct nu = (lambda_ gr nu, relabel gr (last nu))
 
 
@@ -147,7 +147,7 @@ leftMostNode gr pi1 = case childPartitions gr pi1 of
 nauty :: Partition -> Graph -> ST s ([Permutation], Graph)
 nauty userPartition gr0 =
     do {
-       ;let gr = fmap sort $ gr0
+       ;let gr = sort <$> gr0
        ;let graphBounds = bounds gr
        ;let relabeling p1 p2 = permBetween graphBounds (map head p1) (map head p2)
        -- return the relabelling defined by the mapping between two discrete partitions

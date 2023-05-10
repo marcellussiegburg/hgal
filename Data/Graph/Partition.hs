@@ -87,9 +87,9 @@ replace f rep (l:ls)
 
 extractLargest :: [[a]] -> ([a], [[a]])
 extractLargest list = (largest, before ++ after)
-  where (before, (largest:after)) = break hasMaxLength list
+  where (before, largest:after) = break hasMaxLength list
         hasMaxLength el = length el == maxLength
-        maxLength = maximum $ map length $ list
+        maxLength = maximum $ map length list
 
 groupSortBy :: Ord k => (a -> k) -> [a] -> [[a]]
 
@@ -97,7 +97,7 @@ groupSortBy :: Ord k => (a -> k) -> [a] -> [[a]]
 --    where fstComp x y = compare (fst x) (fst y)
 --        fstEq x y = fst x == fst y
 
-groupSortBy f list = map snd $ Map.toList $ Map.fromListWith (\x y -> y ++ x) [(f v, [v]) | v <- list]
+groupSortBy f list = map snd $ Map.toList $ Map.fromListWith (++) [(f v, [v]) | v <- list]
 -- TODO: for some reason replacing map snd $ Map.toList by Map.elems makes the program slower. Investigate.
 
 mcr :: Partition -> [Vertex]
@@ -105,7 +105,7 @@ mcr = map head
 
 -- | Returns vertices fixes in the given orbits
 fixedInOrbits :: Partition -> [Vertex]
-fixedInOrbits part = map head $ filter isSingleton $ part
+fixedInOrbits part = map head $ filter isSingleton part
 
 isNeighbour :: Graph -> Vertex -> Vertex -> Bool
 isNeighbour gr n1 n2 = n2 `elem` (gr!n1)
@@ -144,7 +144,7 @@ osh = foldl' (\x y -> 97 * y + x + 1230497) 1
 -- @lambda@ must be insensitive to automorphisms relabeling of the graph for the Automorphism module to work.
 lambda :: Graph -> Partition -> Indicator
 lambda gr nu
-    = osh [oih $ map fromIntegral $ map (degreeCellVertex gr c) (range $ bounds $ gr) | c <- nu]
+    = osh [oih $ map (fromIntegral . degreeCellVertex gr c) (range $ bounds gr) | c <- nu]
 
 -- prop_lambda gr pi gamma = lambda gr pi == lambda (applyPerm gamma gr) (applyPermPart gamma pi)
 --  where gamma is an automorphism of gr

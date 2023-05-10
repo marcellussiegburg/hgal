@@ -40,7 +40,7 @@ hCubeG :: Int -> Graph
 hCubeG n = powerG n arcG
 
 powerG :: Int -> Graph -> Graph
-powerG n gr = foldr productG vertexG (take n $ repeat gr)
+powerG n gr = foldr productG vertexG (replicate n gr)
 
 kG :: Int -> Int -> Graph
 kG n m = undirG $ buildG (1, n+m) [(x,y) | x <- [1..n], y <- [n+1..n+m]]
@@ -71,7 +71,7 @@ unionG g1 g2 = buildG (low, high) (edges g1 ++ edges g2)
                      (low2, high2) = bounds g2
 
 tensorG :: [Int] -> Graph
-tensorG = foldr productG vertexG . map linearG
+tensorG = foldr (productG . linearG) vertexG
 
 undirG :: Graph -> Graph
 undirG g = unionG g (transposeG g)
