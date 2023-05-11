@@ -26,14 +26,14 @@ naut2 = buildG (1,7)
 
 nex1 :: Graph
 nex1 = buildG (1, 6)
-      [ (1,2), (2,3), (3,1), 
+      [ (1,2), (2,3), (3,1),
         (1,4), (2,5), (3,6) ]
 
 cleanG :: Array Vertex [Vertex] -> Array Vertex [Vertex]
 cleanG = fmap nubOrd
 
 cae :: Array Vertex [Vertex]
-cae = cleanG $ undirG $ buildG (0,9) $ edges (prismG 4) ++ 
+cae = cleanG $ undirG $ buildG (0,9) $ edges (prismG 4) ++
          [ (8,0), (8,1), (8,2), (8,3),
            (9,4), (9,5), (9,6), (9,7) ]
 
@@ -47,12 +47,12 @@ prop_canonicLabelling
   :: Eq a
   => (Graph -> a)
   -> Array Int [Vertex] -> Property
-prop_canonicLabelling canonic gr 
+prop_canonicLabelling canonic gr
     = forAll (arbitraryPerm (bounds gr)) (\p -> canonic (applyPerm p gr) == canonic gr)
 
 runOneTest :: Testable prop => (prop, String) -> Benchmark Result
 runOneTest (test, name) = withLab name $
-                          timeIO $ 
+                          timeIO $
     do putStr $ name ++ "..."
        quickCheckWithResult stdArgs {
          maxDiscardRatio = 20,
@@ -65,7 +65,7 @@ runTests :: Testable prop
   -> Benchmark ([Char], [(String, Result)])
 runTests groupName propTests =
     do blift $ putStrLn $ "Running tests " ++ groupName
-       results <- mapM runOneTest $ propTests
+       results <- mapM runOneTest propTests
        let ok = all isSuccess results
        let failing = filter (not . isSuccess . snd) $ zip (map snd propTests) results
        blift $ putStrLn $ "RESULT: " ++ groupName ++ " " ++ if ok then "PASSED" else "FAILED"
@@ -80,10 +80,10 @@ test_canonic name canonic
     = withLab name $ runTests name [(prop_canonicLabelling canonic gr,n) | (gr,n) <- graphs]
       where graphs = [
                       (naut1,"naut1"), (naut2,"naut2"), (nex1,"nex1"), (cae,"cae"),
-                      (undirG $ hCubeG 5, "hcube"), 
+                      (undirG $ hCubeG 5, "hcube"),
                       (undirG $ cycleG 60, "cycle"),
                       (tensorG [10,10], "grid"),
-                      (sudokuG, "sudoku"), 
+                      (sudokuG, "sudoku"),
                       (emptyG 13, "empty"),
                       (unionG arcG (productG (cliqueG (1,4)) (linearG 13)), "deck1"),
                       (unionG arcG (productG (cliqueG (1,4)) (emptyG 7)), "deck0")
@@ -96,7 +96,7 @@ process (gr0::Graph) =
         let gr :: Graph = applyPerm perm gr0
         putStrLn "Shuffled with"
         print perm
-        putStrLn $ "initial:"
+        putStrLn "initial:"
         print gr
         let (aut, result) = withUnitPartition automorphisms gr
         putStrLn "Automorphism group generator:"

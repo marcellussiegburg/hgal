@@ -1,4 +1,3 @@
-{-# LANGUAGE DeriveAnyClass #-}
 module Bench where
 
 import System.CPUTime
@@ -29,7 +28,7 @@ withLab :: String -> Benchmark a -> Benchmark a
 withLab label = local (++[label])
 
 timeIO :: IO a -> Benchmark a
-timeIO value = do 
+timeIO value = do
      --t1 <- blift getCPUTime
      blift performGC
      t2 <- blift getCPUTime
@@ -42,8 +41,8 @@ timeIO value = do
      report (t3-t2)
      --withLab "GC after" $ report (t4-t3)
      return result
-    
-report :: Integer -> Benchmark () 
+
+report :: Integer -> Benchmark ()
 report time = do ctx <- ask
                  tell [(ctx, time)]
                  return ()
@@ -52,7 +51,7 @@ withType :: Typeable t => t -> Benchmark a -> Benchmark a
 withType t = withLab (show $ typeOf t)
 
 many :: Int -> Benchmark a -> Benchmark ()
-many n bench = sequence_ (replicate n bench)
+many = replicateM_
 
 data Trie k v = Trie (Maybe v) (M.Map k (Trie k v))
 
@@ -60,8 +59,8 @@ instance (Ord k, Semigroup v) => Semigroup (Trie k v) where
   Trie m1 map1 <> Trie m2 map2 = Trie (m1 <> m2) (M.unionWith (<>) map1 map2)
 
 toTrie :: Ord k => ([k],v) -> Trie k v
-toTrie ([],v) = Trie (Just v) (M.empty)
-toTrie ((k:ks),v) = Trie Nothing (M.singleton k (toTrie (ks,v)))
+toTrie ([],v) = Trie (Just v) M.empty
+toTrie (k:ks,v) = Trie Nothing (M.singleton k (toTrie (ks,v)))
 
 instance (Ord k, Monoid v) => Monoid (Trie k v) where
     mempty = Trie Nothing M.empty
@@ -78,17 +77,16 @@ fromList = mconcat . map toTrie
 
 
 runBenchmark :: Benchmark a -> IO a
-runBenchmark bench = do (a, results) <- runWriterT (runReaderT bench []) 
+runBenchmark bench = do (a, results) <- runWriterT (runReaderT bench [])
                         let t = fromList [(l,[m]) | (l,m) <- results]
                             t :: Trie String [Integer]
-                            tree = toTree () t 
-                        putStrLn $ drawTree $ tree
-                        forM_ results $ \(context, v) -> do
-                            printf "%20d %s\n" v (show context)
+                            tree = toTree () t
+                        putStrLn $ drawTree tree
+                        forM_ results $ \(context, v) -> printf "%20d %s\n" v (show context)
                         return a
 
 average :: Integral a => [a] -> a
-average list = sum list `div` genericLength list 
+average list = sum list `div` genericLength list
 
 showNode :: (Show a, Integral a) => (String, Maybe [a]) -> String
 showNode (label, Nothing) = label

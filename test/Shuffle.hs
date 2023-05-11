@@ -1,6 +1,6 @@
 -- This code is stolen from: http://okmij.org/ftp/Haskell/misc.htm
 {-# OPTIONS_GHC -Wwarn=incomplete-patterns #-}
-module Shuffle(shuffle1) where 
+module Shuffle (shuffle1) where
 
 -- A complete binary tree, of leaves and internal nodes.
 -- Internal node: Node card l r
@@ -13,15 +13,15 @@ fix f = g where g = f g -- The fixed point combinator
 
 -- Convert a sequence (e1...en) to a complete binary tree
 
-build_tree :: [a] -> Tree a
-build_tree = (fix grow_level) . (map Leaf)
+buildTree :: [a] -> Tree a
+buildTree = fix grow_level . map Leaf
   where
     grow_level _ [node] = node
     grow_level self l = self $ inner l
 
     inner [] = []
     inner [e] = [e]
-    inner (e1:e2:rest) = (join e1 e2) : inner rest
+    inner (e1:e2:rest) = join e1 e2 : inner rest
 
     join l@(Leaf _)       r@(Leaf _)       = Node 2 l r
     join l@(Node ct _ _)  r@(Leaf _)       = Node (ct+1) l r
@@ -34,12 +34,12 @@ build_tree = (fix grow_level) . (map Leaf)
 -- from a uniform random distribution [0..n-i], compute the
 -- corresponding permutation of the input sequence.
 shuffle1 :: [a] -> [Int] -> [a]
-shuffle1 elements rseq = shuffle1' (build_tree elements) rseq
+shuffle1 elements = shuffle1' (buildTree elements)
   where
     shuffle1' (Leaf e) [] = [e]
     shuffle1' tree (r:r_others) =
       let (b,rest) = extract_tree r tree
-      in b:(shuffle1' rest r_others)
+      in b : shuffle1' rest r_others
 
     -- extract_tree n tree
     -- extracts the n-th element from the tree and returns
