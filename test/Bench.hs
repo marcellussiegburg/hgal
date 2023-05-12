@@ -3,8 +3,16 @@ module Bench where
 import System.CPUTime
 import Text.Printf
 
-import Control.Monad.Writer
-import Control.Monad.Reader
+import Control.Monad                    (forM_, replicateM_)
+import Control.Monad.Trans              (MonadTrans (lift))
+import Control.Monad.Writer (
+  MonadWriter (tell),
+  WriterT (runWriterT),
+  )
+import Control.Monad.Reader (
+  MonadReader (ask, local),
+  ReaderT (runReaderT),
+  )
 
 -- import Data.Tree.AVL
 -- import Data.COrdering
